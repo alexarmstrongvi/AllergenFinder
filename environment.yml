@@ -1,0 +1,7 @@
+name: AllergenFinder
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.9.5
+  - flask-1.1.2

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}AllergenFinder{% endblock%}
+{% block main %}
+<section>
+    <div class="container">
+        <h2>Enter products:</h2>
+        <form action="{{url_for('results')}}" method="post">
+            <h3>Irritating</h3>
+            <datalist id="products">
+                <option value="Banana Boat Ultra Sport Sunscreen Lotion - 8 fl oz">
+                <option value="Coppertone Pure & Simple Sunscreen Lotion - SPF 50 - 6 fl oz">
+                <option value="Sport Sunscreen Lotion - SPF 30 - 3oz - up & up™">
+                <option value="Cetaphil Sheer Mineral Sunscreen - SPF 50 - 3 fl oz">
+                <option value="Neutrogena Sensitive Skin Sunscreen Broad Spectrum - SPF 60+ - 3 fl oz">
+                <option value="CeraVe Hydrating Sunscreen Body Lotion - SPF 50 - 5 fl oz">
+                <option value="La Roche-Posay Anthelios Melt in Milk Sunscreen Lotion - SPF 100 - 3.0 fl oz">
+                <option value="Sun Bum Original Sunscreen Lotion">
+            </datalist>
+            <div class="form-group" id="bad_prods">
+                <div class="form-row mb-1">
+                    <input list="products" name="bad_prods" id="bad_prods_0" placeholder="Product" required>
+                </div>
+                <div class="form-row mb-1">
+                    <input list="products" name="bad_prods" id="bad_prods_0" placeholder="Product" required>
+                </div>
+            </div>
+            <button type="button" class="btn btn-success btn-rounded btn-sm mb-3" onclick="addProdField('bad_prods')">+</button>
+
+            <h3>Non-irritating</h3>
+            <div class="form-group" id="good_prods"></div>
+            <button type="button" class="btn btn-success btn-rounded btn-sm mb-3" onclick="addProdField('good_prods')">+</button>
+
+            <h3>Considering</h3>
+            <div class="form-group" id="consider_prods"></div>
+            <button type="button" class="btn btn-success btn-rounded btn-sm mb-3" onclick="addProdField('consider_prods')">+</button>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

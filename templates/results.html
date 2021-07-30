@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block title %}Results - AllergenFinder{% endblock%}
+{% block main %}
+<section><div class="container border border-white border-5 rounded my-2 opaque-bg">
+    <h2 class="display-5 pt-2">Results</h2>
+    <p>{{n_ingred}} different ingredients processed</p>
+    <h5 class="mb-0">Potential Allergens</h5>
+    <ul class="no-bullets">
+        {% for ingredient, score in scores.items() %}
+        {% if score[0] == 1 %}
+            <li>
+            <input type="range" class="ingredient-score" min="0" max="100" value="{{score[1]}}" title="{{score[1]|round|int}}" disabled>
+            {# ({{score[1]|round|int}})  #}
+            <strong>{{ingredient}}</strong> 
+            (<a target="_blank" rel="noopener noreferrer" href="https://www.ewg.org/skindeep/ingredients/705315-PROPYLENE_GLYCOL/">details</a>)</li>
+        {% endif %}
+        {% endfor %}
+    </ul>
+    {% for ingredient, score in scores.items() if score[0] > 1 -%}
+        {% if loop.first %}<p>Others: {% endif -%}
+        ({{score[1]|round|int}}) {{ingredient}}
+        {%- if loop.last %}.</p>{%- else %}, {% endif %} 
+    {%- endfor -%}
+    {% if prod_scores %}
+    <h5 class="mb-0">Scored Products</h5>
+    <ul class="no-bullets">
+        {%- for prod, score in prod_scores %}
+        <li>
+        <input type="range" class="product-score" min="-1" max="1" step="0.01" value="{{score}}" title="{{score|round(2)}}" disabled>
+        {# ({{"%+5.2f"|format(score)}})\  #}
+        {{prod}}
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% if rec_prods %}
+    <h5 class="mb-0">Recommended Products</h5>
+    <ul class="no-bullets">
+        {%-for prod, score in rec_prods %}
+        <li>
+        <input type="range" class="product-score" min="-1" max="1" step="0.01" value="{{score}}" title="{{score|round(2)}}" disabled>
+        {# ({{"%+5.2f"|format(score)}})\  #}
+        {{prod}} (<a href="#0">shop</a>)
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+</div></section>
+<section>
+<div class="container border border-white border-5 rounded my-2 opaque-bg">
+    <h2 class="display-6 pt-2">Inputs</h2>
+    <ul>
+        <li>Irritating Products</li>
+        <ol> 
+            {% for prod in bad_prods %}
+            <li style="font-size:small">{{prod}}</li>
+            {% endfor %}
+        </ol>
+        {% if good_prods %}
+        <li>Non-irritating Products</li>
+        <ol>
+            {% for prod in good_prods %}
+            <li style="font-size:small">{{prod}}</li>
+            {% endfor %}
+        </ol>
+        {% endif %}
+    </ul>
+</div>
+<div class="container">
+    <form action="{{ url_for('index') }}">
+        <input type="submit" class="btn btn-primary" value="New Search">
+    </form>
+</div>
+</section>
+<section><div class="container py-5 small">
+    <h2>Interpreting the results</h2>
+    <p>
+    <b>Ingredient scores</b> range from 0 to 100.
+    100 indicates the ingredient appeared in every irritating product and none of the non-irritating products.
+    0 indicates the ingredient occured in the same percentage of irritating products as non-irritating products.
+    The score is calculated as the percentage point difference between the percentage of irritating products containing the ingredient and the percentage of non-irritating products containing the ingredient.
+    Ingredients with a score below 0 are ignored.
+    </p>
+    <p>
+    <b>Products scores</b> range from -1 (bad) to 1 (good). (TODO: Score not actually calculated yet)
+    </p>
+</div></section>
+{% endblock %}
