@@ -6,10 +6,6 @@ from flask import (
     request,
 )
 import utils
-# from utils import (
-#     find_potential_allergens,
-#     filter_scores,
-# )
 import random
 ################################################################################
 # Configure
@@ -34,23 +30,34 @@ def results():
     good_prods = {x for x in request.form.getlist('good_prods') if x}
     consider_prods = {x for x in request.form.getlist('consider_prods') if x}
     
-    scores = utils.find_potential_allergens(bad_prods, good_prods)
-    n_ingred = len(scores)
-    scores = utils.filter_scores(scores, min_score=0, max_n_scores=15)
-    #rec_prods = recommend_products(scores)
-    #prod_scores = score_products(scores, consider_prods)
-    rec_prods = [
-        ("Coola Classic Sunscreen Lotion - Guava Mango - SPF 50 - 5 fl oz", 0.95),
-        ("DERMA E Sun Defense Mineral Body Sunscreen - SPF 30 - 4oz", 0.87),
-    ]
-    prod_scores = [(prod, 0.1+0.5*random.random()) for prod in consider_prods]
-    prod_scores = sorted(prod_scores, key=lambda x : x[1])
+    scorer = utils.Scorer().fit(bad_prods, good_prods)
+    n_ingred = len(scorer.ingredient_scores_)
+    
+    ingr_scores = scorer.filtered_scores(min_score=0, max_n_scores=100)
+    ingr_scores = {ingr : (scorer.rank_ingredient(s), int(round(s*100))) for ingr, s in ingr_scores.items()}
+    #HACK while most ingredients are meaningless
+    ingr_scores = {k:v for i, (k,v) in enumerate(ingr_scores.items()) if i < 5}
+
+    prod_scores = {p : scorer.score_product(p) for p in consider_prods}
+    
+    top_n = 5 # Recommend top n ingredients
+    seen_brands = set()
+    
+    rec_prods = {}
+    for p, s in scorer.product_scores_.items():
+        brand = utils.get_brand(p)
+        if p in consider_prods or brand in seen_brands:
+            continue
+        if len(rec_prods) >= top_n:
+            break
+        seen_brands.add(brand)
+        rec_prods[p] = s
 
     return render_template('results.html', 
-        bad_prods=bad_prods, 
-        good_prods=good_prods,
-        n_ingred=n_ingred,
-        scores=scores,
-        rec_prods=rec_prods,
-        prod_scores=prod_scores
+        bad_prods   = bad_prods, 
+        good_prods  = good_prods,
+        n_ingred    = n_ingred,
+        scores      = ingr_scores,
+        prod_scores = prod_scores,
+        rec_prods   = rec_prods,
     )

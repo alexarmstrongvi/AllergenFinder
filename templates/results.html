@@ -7,28 +7,34 @@
     <h5 class="mb-0">Potential Allergens</h5>
     <ul class="no-bullets">
         {% for ingredient, score in scores.items() %}
-        {% if score[0] == 1 %}
-            <li>
-            <input type="range" class="ingredient-score" min="0" max="100" value="{{score[1]}}" title="{{score[1]|round|int}}" disabled>
-            {# ({{score[1]|round|int}})  #}
-            <strong>{{ingredient}}</strong> 
+        <li>
+        <span>
+            0
+            <input type="range" class="ingredient-score" min="0" max="100" value="{{score[1]}}" title="{{score[1]}}" disabled>
+            100
+        </span>
+        <span>
+            : <strong>{{ingredient}}</strong>
             (<a target="_blank" rel="noopener noreferrer" href="https://www.ewg.org/skindeep/ingredients/705315-PROPYLENE_GLYCOL/">details</a>)</li>
-        {% endif %}
+        </span> 
         {% endfor %}
     </ul>
-    {% for ingredient, score in scores.items() if score[0] > 1 -%}
+    <!-- {% for ingredient, score in scores.items() if score[0] > 1 -%}
         {% if loop.first %}<p>Others: {% endif -%}
         ({{score[1]|round|int}}) {{ingredient}}
         {%- if loop.last %}.</p>{%- else %}, {% endif %} 
-    {%- endfor -%}
+    {%- endfor -%} -->
     {% if prod_scores %}
     <h5 class="mb-0">Scored Products</h5>
     <ul class="no-bullets">
-        {%- for prod, score in prod_scores %}
+        {%- for prod, score in prod_scores.items() %}
         <li>
-        <input type="range" class="product-score" min="-1" max="1" step="0.01" value="{{score}}" title="{{score|round(2)}}" disabled>
-        {# ({{"%+5.2f"|format(score)}})\  #}
-        {{prod}}
+        <span>
+            -1
+            <input type="range" class="product-score" min="-1" max="1" step="0.01" value="{{score}}" title="{{'%+5.2f'|format(score)}}" disabled>
+            +1
+        </span>
+        <span>: {{prod}}</span>
         </li>
         {% endfor %}
     </ul>
@@ -36,11 +42,14 @@
     {% if rec_prods %}
     <h5 class="mb-0">Recommended Products</h5>
     <ul class="no-bullets">
-        {%-for prod, score in rec_prods %}
+        {%-for prod, score in rec_prods.items() %}
         <li>
-        <input type="range" class="product-score" min="-1" max="1" step="0.01" value="{{score}}" title="{{score|round(2)}}" disabled>
-        {# ({{"%+5.2f"|format(score)}})\  #}
-        {{prod}} (<a href="#0">shop</a>)
+        <span>
+            -1
+            <input type="range" class="product-score" min="-1" max="1" step="0.01" value="{{score}}" title="{{'%+5.2f'|format(score)}}" disabled>
+            +1
+        </span>
+        <span>: {{prod}} (<a href="#0">shop</a>)</span>
         </li>
         {% endfor %}
     </ul>
@@ -83,7 +92,10 @@
     Ingredients with a score below 0 are ignored.
     </p>
     <p>
-    <b>Products scores</b> range from -1 (bad) to 1 (good). (TODO: Score not actually calculated yet)
+    <b>Products scores</b> range from -1 (bad) to +1 (good).
+    +1 indicates all ingredients are found in only non-irritating products.
+    -1 indicates all ingredients are found in only irritating products.
+    The score is calculated as the average of all ingredient scores in the product with new ingredients assigned the average over all ingredient scores.
     </p>
 </div></section>
 {% endblock %}

@@ -50,7 +50,7 @@ header > h1 > small {
     height : 1em;
     background: linear-gradient(to right, white, red);
     border-radius : 0.5em;
-    margin-right: 0.5em;
+    /* margin-right: 0.5em; */
     border: 0.1em solid black;
 }
 .ingredient-score::-webkit-slider-thumb {
@@ -66,7 +66,7 @@ header > h1 > small {
     height : 1em;
     background: linear-gradient(to right, red,white, rgb(0, 187, 0));
     border-radius : 0.5em;
-    margin-right: 0.5em;
+    /* margin-right: 0.5em; */
     border: 0.1em solid black;
 }
 .product-score::-webkit-slider-thumb {
@@ -80,4 +80,10 @@ ul.no-bullets {
     list-style-type: none; /* Remove bullets */
     padding: 0;
     /* margin: 0;  */
+}
+li > span {
+    padding-left:.5em
+}
+li {
+    margin-top: 0.5em;
 }
