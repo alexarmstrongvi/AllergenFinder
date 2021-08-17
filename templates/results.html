@@ -19,11 +19,6 @@
         </span> 
         {% endfor %}
     </ul>
-    <!-- {% for ingredient, score in scores.items() if score[0] > 1 -%}
-        {% if loop.first %}<p>Others: {% endif -%}
-        ({{score[1]|round|int}}) {{ingredient}}
-        {%- if loop.last %}.</p>{%- else %}, {% endif %} 
-    {%- endfor -%} -->
     {% if prod_scores %}
     <h5 class="mb-0">Scored Products</h5>
     <ul class="no-bullets">

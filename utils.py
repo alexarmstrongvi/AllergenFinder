@@ -1,8 +1,12 @@
 import json
 from functools import reduce
+from math import copysign, sin
 
 PRODUCT_DETAILS = json.load(open('data/product_details.json'))
 BRANDS = json.load(open('data/brands.json'))
+
+def get_all_product_names():
+    return sorted(PRODUCT_DETAILS.keys())
 
 def get_ingredients(product_name):
     global PRODUCT_DETAILS
@@ -91,8 +95,10 @@ class Scorer():
         if not ingr:
             score = self.impute_val
         else:
-            ingr_scores = [self.score_ingredient(i) for i in ingr]
-            score = -sum(ingr_scores)/len(ingr_scores)
+            f = lambda s : -copysign(1,s) * abs(s)**0.5
+            #f = lambda s : -sin(s)
+            scores = [f(self.score_ingredient(i)) for i in ingr]
+            score = sum(scores)/len(scores)
         return score
         
     def filtered_scores(self, min_score = 0, max_n_scores=10):

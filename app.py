@@ -6,7 +6,6 @@ from flask import (
     request,
 )
 import utils
-import random
 ################################################################################
 # Configure
 ################################################################################
@@ -19,7 +18,7 @@ app = Flask(__name__, instance_relative_config=True)
 @app.route('/home')
 @app.route('/index')
 def index():
-    return render_template('index.html')
+    return render_template('index.html', all_products=utils.get_all_product_names())
 
 @app.route('/results', methods=['GET', 'POST'])
 def results():
@@ -39,6 +38,7 @@ def results():
     ingr_scores = {k:v for i, (k,v) in enumerate(ingr_scores.items()) if i < 5}
 
     prod_scores = {p : scorer.score_product(p) for p in consider_prods}
+    prod_scores = dict(sorted(prod_scores.items(), key=lambda kv:-kv[1]))
     
     top_n = 5 # Recommend top n ingredients
     seen_brands = set()
