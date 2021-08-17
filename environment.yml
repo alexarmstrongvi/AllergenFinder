@@ -4,4 +4,4 @@ channels:
   - conda-forge
 dependencies:
   - python=3.9.5
-  - flask-1.1.2
+  - flask=1.1.2
