@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block title %}Under the Hood{% endblock%}
+{% block head %}
+    {# <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        function cb(products) {
+            $.getJSON({
+                url  : '/callback',
+                data : {'data' : products},
+                success : function(result) {
+                    Plotly.newPlot('ingredient_score_plot', result, config={responsive : true});
+                    //update_ingredient_score_plot(result);
+                }
+            });
+        }
+    </script> #}
+{% endblock %}
+{% block main %}
+<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+<div class="container">
+    <h1>Under the Hood</h1>
+    <section>
+        <div class="container">
+            <h2>Scoring Ingredients</h2>
+            <p>
+                Once a set of irritating and non-irratating products have been specified, this information is used to determine an irritation score for the ingredients in all of these products. Intuitively, one wants the score to be larger for ingredients that appear in more irritating products and smaller for those appearing in more non-irritating products. This behavior is acheived by looking at the difference in percentage of bad products with the ingredient and the percentage of good products with the ingredient:
+                <div class='container border border-white border-2 rounded my-2 opaque-bg p-2 text-center'>
+                    score = (% irritating products w/ ingredient) - (% non-irritating products w/ ingredient)
+                </div>
+                
+                This gives scores ranging from -1 to 1 and whose meaning is clear:
+                <ul>
+                    <li><b>+1</b> : All and only irritating products have the ingredient</li>
+                    <li><b>0</b> : The same percentage of irritating and non-irritating products have the ingredient</li>
+                    <li><b>-1</b> : All and only non-irritating products have the ingredient</li>
+                </ul>
+            </p>
+            <p>
+                <strong>Changes for results page</strong>: As is discussed below, the product scores also ranges from -1 to +1. Therefore, to distinguish the ingredient scores, the results page presents the ingredient scores from 0 to 100 where all scores have been scaled by 100 and then scores below 0, the ingredients occuring in a greater percentage of non-irritating products, are ignored.
+            </p>
+            <p>
+                <strong>Try it yourself</strong>: See how different product inputs impact the distribution of ingredient scores below.
+            </p>
+            <div class="row">
+                <datalist id="products">
+                    {% for prod in all_products %}
+                    <option value="{{prod}}">
+                    {% endfor %}
+                </datalist>
+                <form action="{{url_for('under_the_hood')}}" method="post">
+                {# <form onsubmit="cb(this.value); return false;"> #}
+                    <h3>Irritating</h3>
+                    <div class="form-group" id="bad_prods">
+                        <div class="form-row mb-1">
+                            <input list="products" name="bad_prods" id="bad_prods_0" placeholder="Product" required>
+                        </div>
+                        <div class="form-row mb-1">
+                            <input list="products" name="bad_prods" id="bad_prods_1" placeholder="Product" required>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-success btn-rounded btn-sm mb-3" onclick="addProdField('bad_prods')">+</button>
+                    <h3>Non-irritating</h3>
+                    <div class="form-group" id="good_prods">
+                    </div>
+                    <button type="button" class="btn btn-success btn-rounded btn-sm mb-3" onclick="addProdField('good_prods')">+</button>
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </form>
+            </div>
+            <div class="row">
+                <div id='ingredient_score_plot' class='align-center my-3'></div>
+                <script>
+                //update_ingredient_score_plot({{ IngredientScoreGraphJSON | safe }});
+                data = {{ IngredientScoreGraphJSON | safe }};
+                Plotly.newPlot('ingredient_score_plot', data, config={responsive : true});
+                </script>
+                <div class="container border border-white border-5 rounded my-2 opaque-bg">
+                    <h3>Inputs</h3>
+                    <ul>
+                        <li>Irritating Products</li>
+                        <ol> 
+                            {% for prod in bad_prods %}
+                            <li style="font-size:small">{{prod}}</li>
+                            {% endfor %}
+                        </ol>
+                        {% if good_prods %}
+                        <li>Non-irritating Products</li>
+                        <ol>
+                            {% for prod in good_prods %}
+                            <li style="font-size:small">{{prod}}</li>
+                            {% endfor %}
+                        </ol>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </section>
+    <section>
+        <div class="container mt-3">
+            <h2>Scoring Products</h2>
+            <p>Recommending products requires ranking those known to the app by a metric that indicates risk of irratation. Intuitively, products that have more ingredients unique to irritating products should get a higher score while those with less of those ingredients should score lower. AllergenFinder currently accomplishes this by taking a <em>weighted mean of the ingredient scores</em> for each product:
+
+            <div class='container border border-white border-2 rounded my-2 opaque-bg p-2 text-center'>
+                score = &sum;(ingredient score x weight for each ingredient) / &sum;(weights)
+            </div>
+            The weight for any ingredient score is
+            <div class='container border border-white border-2 rounded my-2 opaque-bg p-2 text-center'>
+                weight = |score|<sup>2</sup> if score > 0, otherwise 0.5 x |score|<sup>2</sup> 
+            </div>
+            Squaring the absolute value of the ingredient score results in the weighted average being increasingly determined by larger absolute values. This behavior is desired as the irritation risk most likely comes from a couple ingredients. The different behavior for positive and negative scores reflects how having non-irritating ingredients does not counter the impact of irritating ingredients. However, in order to recommend non-irritating products, the non-irritating ingredients cannot be ignored entirely.
+            </p>
+            <p>
+            <strong>Changes for results page</strong>: The scores on the result page have the sign reversed so that the naturally positve connotation of positve numbers corresponds to non-irritating products.
+            </p>
+            <p>
+            <strong>Try it yourself</strong>: Use the form in the previous section to update the charts below:
+            </p>
+            <p>
+                <div id='product_score_plot' class='align-center my-3'></div>
+                <script>
+                data = {{ ProductScoreGraphJSON | safe }};
+                Plotly.newPlot('product_score_plot', data, config={responsive : true});
+                </script>
+            </p>
+
+
+            <p>
+                <div id='top_product_ingredient_score_plot' class='align-center my-3'></div>
+                <script>
+                data = {{ TopProdIngredScoreGraphJSON | safe }};
+                Plotly.newPlot('top_product_ingredient_score_plot', data, config={responsive : true});
+                </script>
+            </p>
+        </div>
+    </section>
+    {# <section>
+        <div class="container">
+            <h2>Extracting the Data</h2>
+            <!-- IFrame for target product search page -->
+            <!-- IFrame for target product page -->
+        </div>
+    </section>
+    <section>
+        <div class="container">
+            <h2>Cleaning the Data</h2>
+            <!--  Plotly hist of "closeness" score between ingredient names -->
+            <!-- Table of ingredients -->
+        </div>
+    </section> #}
+</div>
+
+{% endblock %}

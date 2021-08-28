@@ -3,39 +3,35 @@
 {% block main %}
 <section>
     <div class="container">
-        <h2>Enter products:</h2>
+        <p><b>WELCOME</b> to AllergenFinder!
+            <ul>
+                <li>To start your search for potential allergens, select from the dropdown menu a few examples of products that cause irritation</li>
+                <li>To improve your results, enter in more products, including ones that do not cause irritation.</li>
+                <li>If you are considering purchasing any products, enter those as well to learn about their irritation risk for you.</li>
+            </ul> 
+        </p>
         <datalist id="products">
             {% for prod in all_products %}
             <option value="{{prod}}">                
             {% endfor %}
-            <!-- Test Case
-            <option value="Banana Boat Ultra Sport Sunscreen Lotion - 8 fl oz">
-            <option value="Coppertone Pure & Simple Sunscreen Lotion - SPF 50 - 6 fl oz">
-            <option value="Sport Sunscreen Lotion - SPF 30 - 3oz - up & up™">
-            <option value="Cetaphil Sheer Mineral Sunscreen - SPF 50 - 3 fl oz">
-            <option value="Neutrogena Sensitive Skin Sunscreen Broad Spectrum - SPF 60+ - 3 fl oz">
-            <option value="CeraVe Hydrating Sunscreen Body Lotion - SPF 50 - 5 fl oz">
-            <option value="La Roche-Posay Anthelios Melt in Milk Sunscreen Lotion - SPF 100 - 3.0 fl oz">
-            <option value="Sun Bum Original Sunscreen Lotion">
-            -->
         </datalist>
         <form action="{{url_for('results')}}" method="post">
-            <h3>Irritating</h3>
+            <h2>Irritating</h2>
             <div class="form-group" id="bad_prods">
                 <div class="form-row mb-1">
                     <input list="products" name="bad_prods" id="bad_prods_0" placeholder="Product" required>
                 </div>
                 <div class="form-row mb-1">
-                    <input list="products" name="bad_prods" id="bad_prods_0" placeholder="Product" required>
+                    <input list="products" name="bad_prods" id="bad_prods_1" placeholder="Product" required>
                 </div>
             </div>
             <button type="button" class="btn btn-success btn-rounded btn-sm mb-3" onclick="addProdField('bad_prods')">+</button>
 
-            <h3>Non-irritating</h3>
+            <h2>Non-irritating</h2>
             <div class="form-group" id="good_prods"></div>
             <button type="button" class="btn btn-success btn-rounded btn-sm mb-3" onclick="addProdField('good_prods')">+</button>
 
-            <h3>Considering</h3>
+            <h2>Considering</h2>
             <div class="form-group" id="consider_prods"></div>
             <button type="button" class="btn btn-success btn-rounded btn-sm mb-3" onclick="addProdField('consider_prods')">+</button>
 

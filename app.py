@@ -6,6 +6,7 @@ from flask import (
     request,
 )
 import utils
+import plotly.graph_objects as go
 ################################################################################
 # Configure
 ################################################################################
@@ -25,9 +26,9 @@ def results():
     if request.method == 'GET':
         redirect(url_for('index'))
     
-    bad_prods  = {x for x in request.form.getlist('bad_prods')  if x}
-    good_prods = {x for x in request.form.getlist('good_prods') if x}
-    consider_prods = {x for x in request.form.getlist('consider_prods') if x}
+    bad_prods  = {x for x in request.form.getlist('bad_prods')  if x and x in utils.PRODUCT_DETAILS}
+    good_prods = {x for x in request.form.getlist('good_prods') if x and x in utils.PRODUCT_DETAILS}
+    consider_prods = {x for x in request.form.getlist('consider_prods') if x and x in utils.PRODUCT_DETAILS}
     
     scorer = utils.Scorer().fit(bad_prods, good_prods)
     n_ingred = len(scorer.ingredient_scores_)
@@ -61,3 +62,47 @@ def results():
         prod_scores = prod_scores,
         rec_prods   = rec_prods,
     )
+
+@app.route('/under-the-hood', methods=['GET', 'POST'])
+def under_the_hood():
+    if request.method == 'GET':
+        # defaults
+        bad_prods = {
+            'Banana Boat Ultra Sport Sunscreen Lotion - 8 fl oz',
+            'Coppertone Pure & Simple Sunscreen Lotion - SPF 50 - 6 fl oz',
+            'Sport Sunscreen Lotion - SPF 30 - 3oz - up & up™',
+            'Cetaphil Sheer Mineral Sunscreen - SPF 50 - 3 fl oz'
+        } 
+        good_prods = {
+            'Neutrogena Sensitive Skin Sunscreen Broad Spectrum - SPF 60+ - 3 fl oz',
+            'La Roche-Posay Anthelios Melt in Milk Sunscreen Lotion - SPF 100 - 3.0 fl oz',
+            'Sun Bum Original Sunscreen Lotion',
+            'CeraVe Hydrating Sunscreen Body Lotion - SPF 50 - 5 fl oz',
+        }
+    if request.method == 'POST':
+        bad_prods  = {x for x in request.form.getlist('bad_prods')  if x}
+        good_prods = {x for x in request.form.getlist('good_prods') if x}
+
+    scorer = utils.Scorer().fit(bad_prods, good_prods)
+    fig_ingred_score = utils.plot_ingredient_scores(scorer)
+    fig_product_score = utils.plot_product_scores(scorer)
+    fig_top_ingred_scores = utils.plot_top_product_ingredient_scores(scorer)
+
+    return render_template('under_the_hood.html',
+        all_products = utils.get_all_product_names(),
+        good_prods = good_prods,
+        bad_prods = bad_prods,
+        IngredientScoreGraphJSON     = utils.to_plotly_json(fig_ingred_score),
+        ProductScoreGraphJSON        = utils.to_plotly_json(fig_product_score),
+        TopProdIngredScoreGraphJSON  = utils.to_plotly_json(fig_top_ingred_scores))
+
+@app.route('/about-me')
+def about_me():
+    return render_template('about_me.html')
+
+# @app.route('/callback', methods=['GET', 'POST'])
+# def callback():
+#     data = request.args.get('data')
+#     print(data)
+#     fig = utils.plot_ingredient_scores()
+#     return utils.to_plotly_json(fig)

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="author" content="Alex Armstrong">
     <title>{% block title%}AllergenFinder{% endblock %}</title>
-    
+    {% block head %}{% endblock %}
     
     <!-- Bootstrap core CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" 
@@ -30,10 +30,10 @@
                 <a class="nav-link" href="{{ url_for('index') }}">Home</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#0">About Me</a>
+                <a class="nav-link" href="{{ url_for('about_me') }}">About Me</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#0">Under the Hood</a>
+                <a class="nav-link" href="{{ url_for('under_the_hood') }}">Under the Hood</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="https://www.thedataincubator.com" target="_blank" rel="nonopener noreferrer">TDI</a>

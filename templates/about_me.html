@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}About Me{% endblock%}
+{% block main %}
+
+<section>
+    <div class="container">
+        <h1>About Me</h1>
+        <img src="{{url_for('static', filename='/images/Headshot_small.jpg')}}" alt="Headshot" class="img w-25 img-thumbnail p-2 my-2 d-block">
+        <p class='lead'>
+            Hello! My name is Alex Armstrong. I recently graduated with my masters in physics and am excited to apply my technical skills to data science.
+            This web application is the capstone project for my fellowship at
+            <a href="https://www.thedataincubator.com/programs/data-science-fellowship/" target="_blank" rel="nonopener noreferrer">The Data Incubator (TDI)</a>,
+            an immersive 8-week data science bootcamp. I chose this project to tackle a challenge and because I think it can truly help users.
+        </p>
+        <p class='px-4'>
+            <b>Accepting the Challenge:</b>
+            Early on in my post-graduation job application process, I was told during an interview that they prefered someone with more "end-to-end" experience. While graduate school gave me extensive experience with data analysis, I admit the data was well-structured and my results did not need to be presented in an interactive format. Not one to turn down a learning opportunity, I set out to build a web application that provided analytics based on a dataset I scraped from the web. I am proud to let this site speak to the amount of Flask, web-scraping, HTML, CSS, and JavaScript I learned in a few weeks with no prior experience. You can learn more about the details at the
+            <a href="{{ url_for('under_the_hood') }}">Under the Hood</a> page.
+        </p>
+        <p class='px-4'>
+            <b>Making a Real Product:</b> My wife is someone who has several allergies. While, fortunately, none of them are deadly, they do impact her quality of life. Several skincare products cause irriation that prevents her from enjoying the day we had planned. While she has learned through frustrating experiences what works and what doesn't, it is difficult to know her reaction to new products in advance. Moreover, while many websites help you learn about specific products and ingredients, getting started can be overwhelming. AllergenFinder was built to help people like my wife who want an easy way to start identifying potential causes of irritation. By processing multiple products at once, AllergenFinder is easy to use and helps focus your research efforts on the ingredients most likely causing you issues.
+        </p>
+        <p></p>
+    </div>
+</section>
+{% endblock %}

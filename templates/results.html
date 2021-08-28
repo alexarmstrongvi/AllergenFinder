@@ -15,7 +15,7 @@
         </span>
         <span>
             : <strong>{{ingredient}}</strong>
-            (<a target="_blank" rel="noopener noreferrer" href="https://www.ewg.org/skindeep/ingredients/705315-PROPYLENE_GLYCOL/">details</a>)</li>
+            {# (<a target="_blank" rel="noopener noreferrer" href="https://www.ewg.org/skindeep/ingredients/705315-PROPYLENE_GLYCOL/">details</a>)</li> #}
         </span> 
         {% endfor %}
     </ul>
@@ -44,7 +44,7 @@
             <input type="range" class="product-score" min="-1" max="1" step="0.01" value="{{score}}" title="{{'%+5.2f'|format(score)}}" disabled>
             +1
         </span>
-        <span>: {{prod}} (<a href="#0">shop</a>)</span>
+        <span>: {{prod}} {# (<a href="#0">shop</a>) #}</span>
         </li>
         {% endfor %}
     </ul>
@@ -83,14 +83,15 @@
     <b>Ingredient scores</b> range from 0 to 100.
     100 indicates the ingredient appeared in every irritating product and none of the non-irritating products.
     0 indicates the ingredient occured in the same percentage of irritating products as non-irritating products.
-    The score is calculated as the percentage point difference between the percentage of irritating products containing the ingredient and the percentage of non-irritating products containing the ingredient.
-    Ingredients with a score below 0 are ignored.
     </p>
     <p>
     <b>Products scores</b> range from -1 (bad) to +1 (good).
     +1 indicates all ingredients are found in only non-irritating products.
     -1 indicates all ingredients are found in only irritating products.
-    The score is calculated as the average of all ingredient scores in the product with new ingredients assigned the average over all ingredient scores.
+    </p>
+    <p>
+        You can learn more about the details at the
+        <a href="{{ url_for('under_the_hood') }}">Under the Hood</a> page
     </p>
 </div></section>
 {% endblock %}

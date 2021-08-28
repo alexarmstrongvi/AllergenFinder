@@ -20,3 +20,18 @@ function addProdField(prod_type){
     
     container.appendChild(form_row);
 }
+
+// function update_ing_score_plot(data) {
+//     Plotly.newPlot('ingredient_score_plot', data, config={responsive : true});
+// }
+
+// function cb(products) {
+//     $.getJSON({
+//         url  : '/callback',
+//         data : {'data' : products},
+//         success : function(result) {
+//             Plotly.newPlot('ingredient_score_plot', result, config={responsive : true});
+//             //update_ingredient_score_plot(result);
+//         }
+//     });
+// }

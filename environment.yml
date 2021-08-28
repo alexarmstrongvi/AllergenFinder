@@ -5,3 +5,4 @@ channels:
 dependencies:
   - python=3.9.6
   - flask=1.1.2
+  - plotly-5.1.0
